@@ -1,4 +1,4 @@
-# SNEAKER API FROM SHOPS
+# COMPARING SNEAKER API
 
 A sneaker API to get the best prices, services from a sneaker webshop.
 
