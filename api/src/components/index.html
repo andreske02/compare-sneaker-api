@@ -1,0 +1,202 @@
+<!--* 
+  ## Code used from 
+  [Bootstrap Template] https://github.com/StartBootstrap/startbootstrap-business-frontpage
+
+  ## Frameworks & plugins used
+  [Bootstrap] https://getbootstrap.com/
+  [Jquery] https://jquery.com/
+  [Bootstrap] https://fontawesome.com/
+  [Popper] https://popper.js.org/
+*---->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="A sneaker API to get the best prices, services from a sneaker webshop.">
+  <meta name="author" content="Andres Vergauwen">
+  <title>Sneaker API</title>
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+  <!-- Custom styles for this template -->
+  <style>
+    body {
+      padding-top: 56px;
+    }
+
+    .header-bg {
+      background-image: url('https://source.unsplash.com/1600x900/?sneakers');
+      position: relative;
+      background-attachment: fixed;
+      background-position: top;
+      z-index: 1;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .header-bg::before {
+      content: "";
+      position: absolute;
+      background: rgb(158, 32, 32);
+      opacity: 0.8;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .bg-red{
+      transition: 0.3s ease-in-out;
+      background: rgba(255, 255, 255, 0.904);
+      border: 1px solid  transparent;
+      color:  rgb(158, 32, 32);;
+    }  .bg-red:hover, .bg-red:active,  .bg-red:focus{
+      outline: none !important;
+      background: rgb(158, 32, 32) !important;
+      border: 1px solid  rgb(158, 32, 32) !important;
+      color:white  !important;
+    }  
+    .bg-red:active{
+     outline: none !important;
+      background: rgb(158, 32, 32) !important;
+      border: 1px solid  rgb(158, 32, 32) !important;
+      color:white  !important;
+    } 
+    .bg-red:focus{
+     outline: none !important;
+      background: rgb(158, 32, 32) !important;
+      border: 1px solid  rgb(158, 32, 32) !important;
+      color:white  !important;
+    } 
+     .bg-dark{
+      background: rgb(36, 36, 36) !important;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Sneaker Api</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Documentation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Api</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class=" py-5 mb-5 header-bg">
+    <div class="container h-100">
+      <div class="row h-100 align-items-center">
+        <div class="col-lg-12">
+          <h1 class="display-4 text-white mt-5 mb-2">Compare sneaker api</h1>
+          <p class="lead mb-5 text-white-50">A sneaker API to get the best prices, services from a sneaker webshop.</p>
+
+            <a class="btn btn-primary bg-red btn-lg " href="https://github.com/andreske02/compare-sneaker-api" target="_blank"> <i
+              class="fab fa-github mr-2"></i>Git repo &raquo;</a>
+          </p>
+
+       
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="container py-5">
+
+    <div class="row">
+      <div class="col-md-12 mb-12  mb-3">
+        <h2>What I Do</h2>
+        <hr>
+        <p>Compare sneaker API helps you to find the <strong>best sneaker prices</strong> on the net for you. It will
+          not only show you the best prices but also, the <strong>reviews</strong>, if it's <strong>available</strong>,
+          in which <strong>colors</strong>,... </p>
+
+      </div>
+      <div class="col-md-12 mb-12 mt-3 mb-3 column">
+        <h2>Contact Me</h2>
+        <hr>
+        <address>
+          <strong>Andres Vergauwen</strong>
+
+        </address>
+        <address>
+          <div class="column align-content-center">
+            <a href="mailto:info@andresvergauwen.be"> <i class="fas fa-envelope text-black-50 mr-1"> </i>
+              info@andresvergauwen.be</a>
+            <br>
+            <a href="https://github.com/andreske02/">
+              <i class="fab fa-github mr-1 text-black-50"></i> Github</a>
+          </div>
+          <a href="https://www.linkedin.com/in/andres-vergauwen-56261988">
+            <i class="fab fa-linkedin-in mr-1 text-black-50"></i> Linkedin</a>
+      </div>
+
+
+      </address>
+    </div>
+  </div>
+  <!-- /.row -->
+
+
+  <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white"> &copy; Compare sneaker Api
+        <script>
+          const getYear = new Date().getFullYear();
+          if (getYear == 2020) {
+            document.write(new Date().getFullYear());
+          } else {
+            document.write("2020" + " - " + new Date().getFullYear());
+          }
+        </script>
+      </p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+  </script>
+</body>
+
+</html>
