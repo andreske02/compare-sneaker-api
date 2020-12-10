@@ -3,16 +3,21 @@ orbs:
   node: circleci/node@3.0.0
 
 jobs:
-  build:
-    docker:
+  build: 
+    docker: 
       - image: circleci/node:12.18
     steps:
       - checkout
-      - run: cd api && npm ci
-      - run: cd api
-        TAG="0.1.${CIRCLE_BUILD_NUM}
-        docker build -t andreske02/compare-sneaker-api:${TAG} .
-        docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-        docker push andreske02/compare-sneaker-api:$TAG
 
+      - run: cd api && npm ci
       - run: cd api && npm test
+
+
+      - setup_remote_docker
+      
+      - run: |
+          cd api
+          TAG="0.1.${CIRCLE_BUILD_NUM}"
+          docker build -t andreske02/compare-sneaker-api:$TAG .
+          docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+          docker push andreske02/compare-sneaker-api:$TAG
