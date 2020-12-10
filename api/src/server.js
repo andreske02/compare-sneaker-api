@@ -66,10 +66,10 @@ app.get("/", (req, res) => {
 
 /*--------- INITIALIZE TABLES --------*/
 async function initialiseTables() {
-  await pg.schema.hasTable("storyblock").then(async (exists) => {
+  await pg.schema.hasTable("sneakers").then(async (exists) => {
     if (!exists) {
       await pg.schema
-        .createTable("storyblock", (table) => {
+        .createTable("sneakers", (table) => {
           table.increments();
           table.uuid("uuid");
           table.string("content");
@@ -78,32 +78,32 @@ async function initialiseTables() {
           table.timestamps(true, true);
         })
         .then(async () => {
-          console.log("created table storyblock");
+          console.log("created table sneakers");
         });
     }
   });
-  await pg.schema.hasTable("story").then(async (exists) => {
-    if (!exists) {
-      await pg.schema
-        .createTable("story", (table) => {
-          table.increments();
-          table.uuid("uuid");
-          table.string("title");
-          table.string("summary");
-          table.timestamps(true, true);
-        })
-        .then(async () => {
-          console.log("created table story");
-          for (let i = 0; i < 10; i++) {
-            const uuid = Helpers.generateUUID();
-            await pg
-              .table("story")
-              .insert({ uuid, title: `random element number ${i}` });
-          }
-        });
-    }
-  });
+  // await pg.schema.hasTable("test").then(async (exists) => {
+  //   if (!exists) {
+  //     await pg.schema
+  //       .createTable("test", (table) => {
+  //         table.increments();
+  //         table.uuid("uuid");
+  //         table.string("title");
+  //         table.string("summary");
+  //         table.timestamps(true, true);
+  //       })
+  //       .then(async () => {
+  //         console.log("created table story");
+  //         for (let i = 0; i < 10; i++) {
+  //           const uuid = Helpers.generateUUID();
+  //           await pg
+  //             .table("story")
+  //             .insert({ uuid, title: `random element number ${i}` });
+  //         }
+  //       });
+  //   }
+  // });
 }
-// initialiseTables();
+initialiseTables();
 
 module.exports = app;
