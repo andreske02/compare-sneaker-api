@@ -1,16 +1,16 @@
 const Helpers = require("./helpers.js");
 const uuid = Helpers.generateUUID();
-
-const pg = require("knex")({
-  client: "pg",
-  version: "9.6",
-  searchPath: ["knex", "public"],
-  connection: process.env.PG_CONNECTION_STRING
-    ? process.env.PG_CONNECTION_STRING
-    : "postgres://example:example@localhost:5432/sneakerdb",
-});
+ const pg = require("knex")({
+    client: "pg",
+    version: "9.6",
+    searchPath: ["knex", "public"],
+    connection: process.env.PG_CONNECTION_STRING
+      ? process.env.PG_CONNECTION_STRING
+      : "postgres://example:example@localhost:5432/sneakerdb",
+  });
 
 const database = {
+ 
   /*--------- INITIALIZE TABLES --------*/
   initialiseTables: async () => {
     await pg.schema.hasTable("sneakers").then(async (exists) => {
@@ -23,12 +23,12 @@ const database = {
             table.string("product_price");
             table.string("product_sale_price");
             table.boolean("product_sale");
-            table.string("product_description");
+            table.text("product_description");
             table.text("product_image");
             table.text("product_available");
             table.text("product_colors");
             table.text("product_url");
-            table.string("product_reviews");
+            table.string("product_shipping_info");
             table.string("brand_uuid");
             table.timestamps(true, true);
           })
@@ -79,7 +79,7 @@ const database = {
       product_colors: JSON.stringify(["White", "Black", "Red"]),
       product_url:
         "https://www.snipes.be/nl/p/nike-air_force_1_shadow-white%2Fwhite%2Fwhite-00013801761737.html",
-      product_reviews: "8.7",
+      product_shipping_info: "8.7",
       brand_uuid: uuid,
     };
     const sneakers = await pg
@@ -113,6 +113,29 @@ const database = {
         console.log("💩", e);
       });
   },
+  addSneakers: async (sneakerObj) => {
+    const sneakers = await pg
+      .table("sneakers")
+      .insert(sneakerObj)
+      .then(async function () {
+        console.log("✅", "Created new sneaker");
+        return;
+      })
+      .catch((e) => {
+        console.log("💩", e);
+      });
+  },
+  deleteSneakers: async () => {
+    const sneakers = await pg
+      .table("sneakers")
+      .del()
+      .then(async function () {
+        console.log("✅", "Sneakers has been deleted");
+        return;
+      })
+      .catch((e) => {
+        console.log("💩", e);
+      });
+  },
 };
-
 module.exports = database;

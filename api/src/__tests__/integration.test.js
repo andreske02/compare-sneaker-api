@@ -18,10 +18,10 @@ const lorem = new LoremIpsum({
       min: 1
     }
   });
+const request = supertest(app)
 let randomNumber = Math.floor(Math.random() * 10) + 1;
  
 
-request = supertest(app)
 // TEST
 describe('test', ()=>{
     test('check if test is test', async (done) =>{
