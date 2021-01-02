@@ -66,6 +66,23 @@ async function torfs(url, res, amountOfProducts) {
   productArray = [];
   const base_url = "https://www.torfs.be";
   let countProductNotFound = 0;
+  let brand_uuid;
+  try {
+    const sneakers = await pg
+    .select(['uuid'])
+    .from("brands")
+    .where({ brand_name: 'torfs' })
+    .then(async function (data) {
+      console.log("✅", `Brand uuid is ${data[0].uuid}`);
+      brand_uuid = data[0].uuid;
+    })
+    .catch((e) => {
+      console.log("💩", e);
+    });
+  } catch (error) {
+    console.log("💩", err);
+    res.status(404);
+  }
   try {
     page = await configureBrowser(url);
     let html = await page.evaluate(() => document.body.innerHTML);
@@ -129,6 +146,7 @@ async function torfs(url, res, amountOfProducts) {
           // Waitforobject
           let waitForObject = new Promise((resolve, reject) => {
             const sneakerObj = {
+              uuid: Helpers.generateUUID(),
               product_brand: product_brand,
               product_name: product_name,
               product_price: product_price,
@@ -140,7 +158,7 @@ async function torfs(url, res, amountOfProducts) {
               product_colors: JSON.stringify(product_colors),
               product_url: base_url + product_url,
               product_shipping_info: product_shipping_info,
-              brand_uuid: uuid,
+              brand_uuid: brand_uuid,
             };
             database.addSneakers(sneakerObj).then(() => {
               // return sneakerObj;
@@ -239,8 +257,23 @@ app.get("/snipes", (req, res) => {
 app.get("/adidas", (req, res) => {
   res.send("adidas");
 });
-app.get("/shops/:search", (req, res) => {
-  res.send("test");
+app.get("/shops/", async (req, res) => {
+  try {
+    const sneakers = await pg
+    .select()
+    .from("sneakers")
+    .then(async function (data) {
+      console.log("✅", "Show sneakers");
+      res.json(data);
+    })
+    .catch((e) => {
+      console.log("💩", e);
+    });
+
+  } catch (error) {
+    console.log("💩", err);
+    res.status(404);
+  }
 });
 app.get("/seeds", async (req, res) => {
   try {
@@ -262,7 +295,50 @@ app.get("/show", async (req, res) => {
     console.log("💩", error);
   }
 });
-
+app.get("/sneakers/:brand", async (req, res) => {
+  try {
+    const sneakers = await pg
+    .select([
+      'brands.brand_name',
+      'brands.brand_logo',
+      'brands.brand_url',
+      'brands.brand_reviews',
+      'sneakers.product_brand',
+      'product_name',
+      'product_price',
+      'product_sale_price',
+      'product_sale',
+      'product_description',
+      'product_image',
+      'product_available',
+      'product_url',
+      'product_shipping_info',
+    ])
+    .from("brands")
+    .rightJoin('sneakers', 'sneakers.brand_uuid', 'brands.uuid')
+    .where({ brand_name: req.params.brand.toLowerCase() })
+    .then(async function (data) {
+      if(data.length == 0){
+        console.log(data);
+       // No content
+       res.status(204).send();
+      }else{
+        console.log("✅", "Show sneakers");
+        for (const sneaker of data) {
+          sneaker.brand_name = sneaker.brand_name.toUpperCase();
+        }
+      
+        res.json(data);
+      }
+    })
+    .catch((e) => {
+      console.log("💩", e);
+    });
+  } catch (error) {
+    console.log("💩", err);
+    res.status(404);
+  }
+});
 async function configureBrowser(url) {
   try {
     browser = await puppeteer.launch({
@@ -281,3 +357,6 @@ async function openPage(url) {
 }
 database.initialiseTables();
 module.exports = app;
+
+
+
