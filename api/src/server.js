@@ -257,23 +257,8 @@ app.get("/snipes", (req, res) => {
 app.get("/adidas", (req, res) => {
   res.send("adidas");
 });
-app.get("/shops/", async (req, res) => {
-  try {
-    const sneakers = await pg
-    .select()
-    .from("sneakers")
-    .then(async function (data) {
-      console.log("✅", "Show sneakers");
-      res.json(data);
-    })
-    .catch((e) => {
-      console.log("💩", e);
-    });
-
-  } catch (error) {
-    console.log("💩", err);
-    res.status(404);
-  }
+app.get("/shops/:search", (req, res) => {
+  res.send("test");
 });
 app.get("/seeds", async (req, res) => {
   try {
@@ -295,6 +280,7 @@ app.get("/show", async (req, res) => {
     console.log("💩", error);
   }
 });
+
 app.get("/sneakers/:brand", async (req, res) => {
   try {
     const sneakers = await pg
@@ -339,6 +325,8 @@ app.get("/sneakers/:brand", async (req, res) => {
     res.status(404);
   }
 });
+
+
 async function configureBrowser(url) {
   try {
     browser = await puppeteer.launch({
@@ -357,6 +345,3 @@ async function openPage(url) {
 }
 database.initialiseTables();
 module.exports = app;
-
-
-
