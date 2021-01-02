@@ -59,7 +59,6 @@ let shops = [
   "Ultimate Sneakerstore",
 ];
 
-
 //TODO TORFS
 /*======= Torfs function =======*/
 async function torfs(url, res, amountOfProducts) {
@@ -69,18 +68,18 @@ async function torfs(url, res, amountOfProducts) {
   let brand_uuid;
   try {
     const sneakers = await pg
-    .select(['uuid'])
-    .from("brands")
-    .where({ brand_name: 'torfs' })
-    .then(async function (data) {
-      console.log("✅", `Brand uuid is ${data[0].uuid}`);
-      brand_uuid = data[0].uuid;
-    })
-    .catch((e) => {
-      console.log("💩", e);
-    });
+      .select(["uuid"])
+      .from("brands")
+      .where({ brand_name: "torfs" })
+      .then(async function (data) {
+        console.log("✅", `Brand uuid is ${data[0].uuid}`);
+        brand_uuid = data[0].uuid;
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
+      });
   } catch (error) {
-    console.log("💩", err);
+    console.log("❌ ERROR: ", error.message);
     res.status(404);
   }
   try {
@@ -106,11 +105,11 @@ async function torfs(url, res, amountOfProducts) {
             .find(".js-productAttributes .product-name")
             .text();
 
-
-          let product_price =   content.find(".price span.value").first().text() !== "" ?  content.find(".price span.value").first().text() : content.find(".product-variants .price__list .value").text() ;
+          let product_price =
+            content.find(".price span.value").first().text() !== ""
+              ? content.find(".price span.value").first().text()
+              : content.find(".product-variants .price__list .value").text();
           product_price = product_price.replace(/(\r\n|\n|\r)/gm, "").trim();
-
-
 
           let product_sale_price = content
             .find(".product-variants .discounted .value")
@@ -169,11 +168,14 @@ async function torfs(url, res, amountOfProducts) {
           waitForObject
             .then((value) => {
               productArray.push(value);
-              if (($(".product-tile", html).length - countProductNotFound) === productArray.length)
+              if (
+                $(".product-tile", html).length - countProductNotFound ===
+                productArray.length
+              )
                 resolve();
             })
             .catch((error) => {
-              console.log("💩", error.message);
+              console.log("❌ ERROR: ", error.message);
             });
         }
       });
@@ -202,7 +204,7 @@ async function torfs(url, res, amountOfProducts) {
               });
             })
             .catch((error) => {
-              console.log("💩", error.message);
+              console.log("❌ ERROR: ", error.message);
             });
         } else {
           page.close();
@@ -210,14 +212,13 @@ async function torfs(url, res, amountOfProducts) {
             console.log("closed browser");
             res.json(productArray);
           });
-         
         }
       })
       .catch((error) => {
-        console.log("💩", error.message);
+        console.log("❌ ERROR: ", error.message);
       });
   } catch (error) {
-    console.log("💩", error);
+    console.log("❌ ERROR: ", error.message);
   }
 }
 /*======= Torfs start scraping =======*/
@@ -228,8 +229,8 @@ app.get("/torfs", async (req, res) => {
     let amountOfProducts = 15;
     let url = `https://www.torfs.be/nl/zoekresultaten?q=sneakers&start=0&sz=${amountOfProducts}`;
     await torfs(url, res, amountOfProducts);
-  } catch (err) {
-    console.log("💩", err);
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
     res.status(404);
   }
 });
@@ -242,13 +243,11 @@ app.post("/torfs", async (req, res) => {
     let url = `https://www.torfs.be/nl/zoekresultaten?q=sneakers&start=${total}&sz=${amountOfProducts}`;
     console.log(url);
     await torfs(url, res, amountOfProducts);
-  } catch (err) {
-    console.log("💩", err);
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
     res.status(404);
   }
 });
-
-
 
 //TODO SNIPES
 app.get("/snipes", (req, res) => {
@@ -257,9 +256,6 @@ app.get("/snipes", (req, res) => {
 app.get("/adidas", (req, res) => {
   res.send("adidas");
 });
-app.get("/shops/:search", (req, res) => {
-  res.send("test");
-});
 app.get("/seeds", async (req, res) => {
   try {
     let sneaker = await database.sneakerSeeders();
@@ -267,7 +263,7 @@ app.get("/seeds", async (req, res) => {
     res.json(sneaker);
     res.json(brand);
   } catch (error) {
-    console.log("💩", error);
+    console.log("❌ ERROR: ", error.message);
   }
 });
 app.get("/show", async (req, res) => {
@@ -277,55 +273,121 @@ app.get("/show", async (req, res) => {
       res: result,
     });
   } catch (error) {
-    console.log("💩", error);
+    console.log("❌ ERROR: ", error.message);
   }
 });
 
+//TODO BRANDS
+// Create brand
+app.post("/brand", async (req, res) => {
+  try {
+    const brand = await pg
+      .table("brands")
+      .insert(req.body)
+      .then(function () {
+        console.log("✅", "Created new brand");
+        res.status(201).send(`Succesfully created ${req.body.brand_name}`);
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
+        res.status(500).send(error.message);
+      });
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
+    res.status(500).send(error.message);
+  }
+});
+// Show brand by id
+app.get("/brand/:uuid", async (req, res) => {
+  try {
+    const result = await pg
+      .select()
+      .from("brands")
+      .where({ uuid: req.params.uuid })
+      .then((data) => {
+    if(data.length < 1){
+      console.log("❌ ERROR: ", `${req.params.uuid} don't exist! `);
+      res.status(500).send(`${req.params.uuid} don't exist! `);
+    }else{
+      console.log("✅", `Show brand ${data[0].brand_name}`);
+      res.json(data);
+    }
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
+        res.status(500).send(error.message);
+      });
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
+    res.status(500).send(error.message);
+  }
+});
+// Delete brand
+app.delete("/brand/:uuid", async (req, res) => {
+  try {
+    const brand = await pg
+      .table("brands")
+      .where({ uuid: req.params.uuid })
+      .del()
+      .then(() => {
+        console.log("✅", "Deleted brand");
+        res.status(410).send(`Deleted ${req.body.brand_name}`);
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
+        res.status(500).send(error.message);
+      });
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
+    res.status(500).send(error.message);
+  }
+});
+
+//TODO SNEAKERS
 app.get("/sneakers/:brand", async (req, res) => {
   try {
     const sneakers = await pg
-    .select([
-      'brands.brand_name',
-      'brands.brand_logo',
-      'brands.brand_url',
-      'brands.brand_reviews',
-      'sneakers.product_brand',
-      'product_name',
-      'product_price',
-      'product_sale_price',
-      'product_sale',
-      'product_description',
-      'product_image',
-      'product_available',
-      'product_url',
-      'product_shipping_info',
-    ])
-    .from("brands")
-    .rightJoin('sneakers', 'sneakers.brand_uuid', 'brands.uuid')
-    .where({ brand_name: req.params.brand.toLowerCase() })
-    .then(async function (data) {
-      if(data.length == 0){
-        console.log(data);
-       // No content
-       res.status(204).send();
-      }else{
-        console.log("✅", "Show sneakers");
-        for (const sneaker of data) {
-          sneaker.brand_name = sneaker.brand_name.toUpperCase();
+      .select([
+        "brands.brand_name",
+        "brands.brand_logo",
+        "brands.brand_url",
+        "brands.brand_reviews",
+        "sneakers.product_brand",
+        "product_name",
+        "product_price",
+        "product_sale_price",
+        "product_sale",
+        "product_description",
+        "product_image",
+        "product_available",
+        "product_url",
+        "product_shipping_info",
+      ])
+      .from("brands")
+      .rightJoin("sneaker", "sneakers.brand_uuid", "brands.uuid")
+      .where({ brand_name: req.params.brand.toLowerCase() })
+      .then(async function (data) {
+        if (data.length == 0) {
+          console.log("No content");
+          // No content
+          res.status(204).send();
+        } else {
+          console.log("✅", "Show sneakers");
+          for (const sneaker of data) {
+            sneaker.brand_name = sneaker.brand_name.toUpperCase();
+          }
+          res.json(data);
         }
-      
-        res.json(data);
-      }
-    })
-    .catch((e) => {
-      console.log("💩", e);
-    });
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
+        res.status(500).send(error.message);
+      });
   } catch (error) {
-    console.log("💩", err);
-    res.status(404);
+    console.log("❌ ERROR: ", error.message);
+    res.status(500).send(error.message);
   }
 });
-
 
 async function configureBrowser(url) {
   try {
@@ -335,7 +397,7 @@ async function configureBrowser(url) {
     });
     return openPage(url);
   } catch (error) {
-    console.log("💩", error);
+    console.log("❌ ERROR: ", error.message);
   }
 }
 async function openPage(url) {

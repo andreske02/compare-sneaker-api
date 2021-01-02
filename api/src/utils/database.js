@@ -46,7 +46,14 @@ const database = {
             table.text("product_colors");
             table.text("product_url");
             table.string("product_shipping_info");
-            table.uuid("brand_uuid").unsigned().references("uuid").inTable("brands").onDelete("CASCADE").onUpdate("CASCADE").notNullable();
+            table
+              .uuid("brand_uuid")
+              .unsigned()
+              .references("uuid")
+              .inTable("brands")
+              .onDelete("CASCADE")
+              .onUpdate("CASCADE")
+              .notNullable();
             table.timestamps(true, true);
           })
           .then(async () => {
@@ -80,7 +87,7 @@ const database = {
       product_url:
         "https://www.snipes.be/nl/p/nike-air_force_1_shadow-white%2Fwhite%2Fwhite-00013801761737.html",
       product_shipping_info: "8.7",
-      brand_uuid:"6fed38e0-4d1d-11eb-9764-7b26be27a53d",
+      brand_uuid: "6fed38e0-4d1d-11eb-9764-7b26be27a53d",
     };
     const sneakers = await pg
       .table("sneakers")
@@ -89,12 +96,12 @@ const database = {
         console.log("✅", "Created new sneaker");
         return;
       })
-      .catch((e) => {
-        console.log("💩", e);
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
       });
   },
   brandSeeders: async () => {
-    const brandArrayObj =[
+    const brandArrayObj = [
       {
         uuid: Helpers.generateUUID(),
         brand_name: "snipes",
@@ -104,26 +111,25 @@ const database = {
         brand_url: "https://www.snipes.com/",
       },
       {
-        uuid: '6fed38e0-4d1d-11eb-9764-7b26be27a53d',
+        uuid: "6fed38e0-4d1d-11eb-9764-7b26be27a53d",
         brand_name: "torfs",
         brand_reviews: "8.7",
         brand_logo:
           "https://www.torfs.be/on/demandware.static/Sites-Torfs-Webshop-BE-Site/-/default/dw1f8272ff/images/logo_standard.svg",
         brand_url: "https://www.torfs.be/",
       },
-    ] 
+    ];
     for (const brandObj of brandArrayObj) {
       const brands = await pg
-      .table("brands")
-      .insert(brandObj)
-      .then(async function () {
-        console.log("✅", "Created new brand");
-      })
-      .catch((e) => {
-        console.log("💩", e);
-      });
+        .table("brands")
+        .insert(brandObj)
+        .then(async function () {
+          console.log("✅", "Created new brand");
+        })
+        .catch((error) => {
+          console.log("❌ ERROR: ", error.message);
+        });
     }
-    
   },
 
   /*--------- CRUD  --------*/
@@ -135,11 +141,10 @@ const database = {
         console.log("✅", "Created new sneaker");
         return;
       })
-      .catch((e) => {
-        console.log("💩", e);
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
       });
   },
-
   deleteSneakers: async () => {
     const sneakers = await pg
       .table("sneakers")
@@ -148,8 +153,8 @@ const database = {
         console.log("✅", "Sneakers has been truncated");
         return;
       })
-      .catch((e) => {
-        console.log("💩", e);
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
       });
   },
 };
