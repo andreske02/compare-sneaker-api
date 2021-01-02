@@ -22,17 +22,17 @@ const request = supertest(app)
 let randomNumber = Math.floor(Math.random() * 10) + 1;
  
 
-// TEST
-describe('test', ()=>{
-    test('check if test is test', async (done) =>{
+// Create 
+describe('create a brand', ()=>{
+    test('check if brand is created succesfully', async (done) =>{
         try {
-            const response = 404;
-            expect(response).toBe(404,done())
+            const response = await request.post('/')
+            expect(response.status).toBe(200)
+            done()
         } catch (error) {
             if (error) {
                 console.log(error);
             }
-            done()
         }
     })
 }) 
