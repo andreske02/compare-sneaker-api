@@ -93,6 +93,11 @@ const database = {
         console.log("💩", e);
       });
   },
+
+
+
+
+
   brandSeeders: async () => {
     const brandObj = {
       uuid: uuid,
@@ -113,11 +118,19 @@ const database = {
         console.log("💩", e);
       });
   },
+
+
+
+
+
+
+
+  
   addSneakers: async (sneakerObj) => {
     const sneakers = await pg
       .table("sneakers")
       .insert(sneakerObj)
-      .then(async function () {
+      .then(function () {
         console.log("✅", "Created new sneaker");
         return;
       })
@@ -128,9 +141,9 @@ const database = {
   deleteSneakers: async () => {
     const sneakers = await pg
       .table("sneakers")
-      .del()
+      .truncate()
       .then(async function () {
-        console.log("✅", "Sneakers has been deleted");
+        console.log("✅", "Sneakers has been truncated");
         return;
       })
       .catch((e) => {
