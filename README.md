@@ -12,29 +12,27 @@ You can use this api to compare sneaker prices on different webshops.
 
 Use the package manager [yarn](https://yarnpkg.com/) to install all the requirements.
 -   Packages
-    - [Puppeteer](https://classic.yarnpkg.com/en/package/puppeteer)
-    - [Express](https://classic.yarnpkg.com/en/package/exrpress)
-    - [Cron](https://classic.yarnpkg.com/en/package/cron)
-    - [Cheerio](https://classic.yarnpkg.com/en/package/cheerio)
-    - [Lodash](https://classic.yarnpkg.com/en/package/lodash)
-    - [Firebase](https://classic.yarnpkg.com/en/package/firebase)
+    - [Puppeteer](https://www.npmjs.com/package/puppeteer)
+    - [Express](https://www.npmjs.com/package/express)
+    - [Cron](https://www.npmjs.com/package/cron)
+    - [Cheerio](https://www.npmjs.com/package/cheerio)
 -   Testing
-    - [Jest](https://classic.yarnpkg.com/en/package/jest)
+    - [Jest](https://www.npmjs.com/package/jest)
 
 ```bash
-yarn add puppeteer
-yarn add express
-yarn add cron
-yarn add cheerio
-yarn add lodash
-yarn add firebase
-yarn add newman
+npm i puppeteer
+npm i express
+npm i cron
+npm i cheerio
+npm i body-parser
+npm i request
+npm i supertest
 ```
 
 ## Usage
-
-```python
-
+Open terminal on 
+```bash
+npm start
 
 ```
 
