@@ -133,17 +133,84 @@ const database = {
   },
 
   /*--------- CRUD  --------*/
-  addSneakers: async (sneakerObj) => {
+  // Brand
+  getBrandByName: async (brandName) => {
+    let brand = await pg
+      .select(["uuid"])
+      .from("brands")
+      .where({ brand_name: brandName });
+    return brand;
+  },
+  getBrandById: async (brandId) => {
+    try {
+      const brand = await pg.select().from("brands").where({ uuid: brandId });
+      return brand;
+    } catch (error) {
+      console.log("❌ ERROR: ", error.message);
+    }
+  },
+  deleteBrandById: async (brandId) => {
+    try {
+      const brand = await pg.table("brands").where({ uuid: brandId }).del();
+      return brand;
+    } catch (error) {
+      console.log("❌ ERROR: ", error.message);
+    }
+  },
+  updateBrandById: async (brandObj) => {
+    try {
+      const brand = await pg
+        .table("brands")
+        .where({ uuid: brandObj.uuid })
+        .update(brandObj);
+      return brand;
+    } catch (error) {
+      console.log("❌ ERROR: ", error.message);
+    }
+  },
+  // Sneakers
+  addSneakers: async (sneakersArray) => {
     const sneakers = await pg
       .table("sneakers")
-      .insert(sneakerObj)
+      .insert(sneakersArray)
       .then(function () {
-        console.log("✅", "Created new sneaker");
+        console.log(
+          "✅",
+          `Succesfully Created ${sneakersArray.length} sneakers`
+        );
         return;
       })
       .catch((error) => {
         console.log("❌ ERROR: ", error.message);
       });
+  },
+  getSneakersByBrand: async (brandName, sort) => {
+    try {
+      const sneakers = await pg
+        .select([
+          "brands.brand_name",
+          "brands.brand_logo",
+          "brands.brand_url",
+          "brands.brand_reviews",
+          "sneakers.product_brand",
+          "product_name",
+          "product_price",
+          "product_sale_price",
+          "product_sale",
+          "product_description",
+          "product_image",
+          "product_available",
+          "product_url",
+          "product_shipping_info",
+        ])
+        .from("brands")
+        .rightJoin("sneakers", "sneakers.brand_uuid", "brands.uuid")
+        .where({ brand_name: brandName.toLocaleLowerCase() })
+        .orderBy("product_name", `${sort}`);
+      return sneakers;
+    } catch (error) {
+      console.log("❌ ERROR: ", error.message);
+    }
   },
   deleteSneakers: async () => {
     const sneakers = await pg

@@ -41,6 +41,7 @@ app.use(
   })
 );
 const hosturl = "http://localhost:3001";
+
 /*--------- SHOW ALL RECORDS --------*/
 app.get("/", (req, res) => {
   res.status(200).sendFile(htmlFile);
@@ -66,22 +67,16 @@ async function torfs(url, res, amountOfProducts) {
   const base_url = "https://www.torfs.be";
   let countProductNotFound = 0;
   let brand_uuid;
+  // Get brand uuid to connect tables
   try {
-    const sneakers = await pg
-      .select(["uuid"])
-      .from("brands")
-      .where({ brand_name: "torfs" })
-      .then(async function (data) {
-        console.log("✅", `Brand uuid is ${data[0].uuid}`);
-        brand_uuid = data[0].uuid;
-      })
-      .catch((error) => {
-        console.log("❌ ERROR: ", error.message);
-      });
+    let brand = await database.getBrandByName('torfs');
+    console.log("✅", `Brand uuid is ${brand[0].uuid}`);
+    brand_uuid = brand[0].uuid;
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
-    res.status(404);
   }
+
+  // Start scraping 
   try {
     page = await configureBrowser(url);
     let html = await page.evaluate(() => document.body.innerHTML);
@@ -159,10 +154,8 @@ async function torfs(url, res, amountOfProducts) {
               product_shipping_info: product_shipping_info,
               brand_uuid: brand_uuid,
             };
-            database.addSneakers(sneakerObj).then(() => {
-              // return sneakerObj;
-              resolve(sneakerObj);
-            });
+            resolve(sneakerObj);
+            console.log("✅", "Created new sneaker");
           });
           // Completed object
           waitForObject
@@ -183,36 +176,38 @@ async function torfs(url, res, amountOfProducts) {
 
     waitForProducts
       .then(async () => {
-        let endpage;
-        let currentpage;
-        $(".bs-link", html).each(async function (counter, value) {
-          endpage = $(this).prop("data-page");
-        });
-        currentpage = $(".bs-current", html).prop("data-page");
-        if (currentpage !== endpage) {
-          let nextpage = await $(".bs-current", html).next().prop("data-page");
-          page
-            .close()
-            .then(() => {
-              console.log("closed page");
-              browser.close().then(() => {
-                console.log("gotonextpage");
-                request.post(`${hosturl}/torfs`, {
-                  form: { counter: nextpage, amount: amountOfProducts },
-                });
-                res.json(productArray);
-              });
-            })
-            .catch((error) => {
-              console.log("❌ ERROR: ", error.message);
-            });
-        } else {
-          page.close();
-          browser.close().then(() => {
-            console.log("closed browser");
-            res.json(productArray);
+        database.addSneakers(productArray).then(async () => {
+          let endpage;
+          let currentpage;
+          $(".bs-link", html).each(async function (counter, value) {
+            endpage = $(this).prop("data-page");
           });
-        }
+          currentpage = $(".bs-current", html).prop("data-page");
+          if (currentpage !== endpage) {
+            let nextpage = await $(".bs-current", html).next().prop("data-page");
+            page
+              .close()
+              .then(() => {
+                console.log("closed page");
+                browser.close().then(() => {
+                  console.log("gotonextpage");
+                  request.post(`${hosturl}/torfs`, {
+                    form: { counter: nextpage, amount: amountOfProducts },
+                  });
+                  res.json(productArray);
+                });
+              })
+              .catch((error) => {
+                console.log("❌ ERROR: ", error.message);
+              });
+          } else {
+            page.close();
+            browser.close().then(() => {
+              console.log("closed browser");
+              res.json(productArray);
+            });
+          }
+        });
       })
       .catch((error) => {
         console.log("❌ ERROR: ", error.message);
@@ -227,7 +222,7 @@ app.get("/torfs", async (req, res) => {
     console.log("Torfs");
     await database.deleteSneakers();
     let amountOfProducts = 15;
-    let url = `https://www.torfs.be/nl/zoekresultaten?q=sneakers&start=0&sz=${amountOfProducts}`;
+    let url = `https://www.torfs.be/nl/zoekresultaten?q=sneakers&start=0&sz=${amountOfProducts}` ;
     await torfs(url, res, amountOfProducts);
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
@@ -249,35 +244,9 @@ app.post("/torfs", async (req, res) => {
   }
 });
 
-//TODO SNIPES
-app.get("/snipes", (req, res) => {
-  res.send("snipes");
-});
-app.get("/adidas", (req, res) => {
-  res.send("adidas");
-});
-app.get("/seeds", async (req, res) => {
-  try {
-    let sneaker = await database.sneakerSeeders();
-    let brand = await database.brandSeeders();
-    res.json(sneaker);
-    res.json(brand);
-  } catch (error) {
-    console.log("❌ ERROR: ", error.message);
-  }
-});
-app.get("/show", async (req, res) => {
-  try {
-    const result = await pg.select("*").from("sneakers");
-    res.json({
-      res: result,
-    });
-  } catch (error) {
-    console.log("❌ ERROR: ", error.message);
-  }
-});
 
-//TODO BRANDS
+
+//TODO BRANDS ENDPOINTS
 // Create brand
 app.post("/brand", async (req, res) => {
   try {
@@ -297,97 +266,115 @@ app.post("/brand", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-// Show brand by id
+// Show brand by uuid
 app.get("/brand/:uuid", async (req, res) => {
   try {
-    const result = await pg
-      .select()
-      .from("brands")
-      .where({ uuid: req.params.uuid })
-      .then((data) => {
-    if(data.length < 1){
+    const brand = await database.getBrandById(req.params.uuid);
+    if(brand.length < 1){
+      console.log("❌ ERROR: ", `${req.params.uuid} don't exist! `);
+      res.status(500).send(`${req.params.uuid} don't exist! `);
+    }else{
+      console.log("✅", `Show brand ${brand[0].brand_name}`);
+      res.json(brand);
+    }
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
+    res.status(500).send(error.message);
+  }
+});
+// Show brand by name
+app.get("/brand/:brandname", async (req, res) => {
+  try {
+    const brand = await database.getBrandByName(req.params.brandname);
+    if(brand.length < 1){
       console.log("❌ ERROR: ", `${req.params.uuid} don't exist! `);
       res.status(500).send(`${req.params.uuid} don't exist! `);
     }else{
       console.log("✅", `Show brand ${data[0].brand_name}`);
       res.json(data);
     }
-      })
-      .catch((error) => {
-        console.log("❌ ERROR: ", error.message);
-        res.status(500).send(error.message);
-      });
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
     res.status(500).send(error.message);
   }
 });
-// Delete brand
+// Update brand by uuid
+app.put("/updatebrand", async (req, res) => {
+  try {
+    console.log(req.body);
+    const brand = await  database.updateBrandById(req.body);
+    console.log("✅",`Update brand ${req.body.brand_name}`);
+    res.status(410).send(`Update brand ${req.body.brand_name}`);
+   } catch (error) {
+     console.log("❌ ERROR: ", error.message);
+     res.status(500).send(error.message);
+   }
+});
+// Delete brand by uuid
 app.delete("/brand/:uuid", async (req, res) => {
   try {
-    const brand = await pg
-      .table("brands")
-      .where({ uuid: req.params.uuid })
-      .del()
-      .then(() => {
-        console.log("✅", "Deleted brand");
-        res.status(410).send(`Deleted ${req.body.brand_name}`);
-      })
-      .catch((error) => {
-        console.log("❌ ERROR: ", error.message);
-        res.status(500).send(error.message);
-      });
+   const brand = await  database.deleteBrandById(req.params.uuid);
+   console.log("✅", "Deleted brand");
+   res.status(410).send(`Deleted ${req.body.brand_name}`);
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
     res.status(500).send(error.message);
   }
 });
 
-//TODO SNEAKERS
-app.get("/sneakers/:brand", async (req, res) => {
+//TODO SNEAKERS ENDPOINTS
+app.get("/sneakers/:brand/:sort*?/", async (req, res) => {
   try {
-    const sneakers = await pg
-      .select([
-        "brands.brand_name",
-        "brands.brand_logo",
-        "brands.brand_url",
-        "brands.brand_reviews",
-        "sneakers.product_brand",
-        "product_name",
-        "product_price",
-        "product_sale_price",
-        "product_sale",
-        "product_description",
-        "product_image",
-        "product_available",
-        "product_url",
-        "product_shipping_info",
-      ])
-      .from("brands")
-      .rightJoin("sneaker", "sneakers.brand_uuid", "brands.uuid")
-      .where({ brand_name: req.params.brand.toLowerCase() })
-      .then(async function (data) {
-        if (data.length == 0) {
-          console.log("No content");
-          // No content
-          res.status(204).send();
-        } else {
-          console.log("✅", "Show sneakers");
-          for (const sneaker of data) {
-            sneaker.brand_name = sneaker.brand_name.toUpperCase();
-          }
-          res.json(data);
-        }
-      })
-      .catch((error) => {
-        console.log("❌ ERROR: ", error.message);
-        res.status(500).send(error.message);
-      });
+    let sorting = 'asc';
+    if(req.params.hasOwnProperty('sort')){
+      sorting = req.params.sort;
+    }
+    const sneakers = await database.getSneakersByBrand(req.params.brand, sorting);
+    if (sneakers.length == 0) {
+      console.log("No content");
+      // No content
+      res.status(204).send();
+    } else {
+      console.log("✅", `Show sneakers by ${sorting}`);
+      for (const sneaker of sneakers) {
+        sneaker.brand_name = sneaker.brand_name.toUpperCase();
+      }
+      res.json(sneakers);
+    }
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
     res.status(500).send(error.message);
   }
 });
+
+
+
+//TODO OTHER ENDPOINTS
+app.get("/snipes", (req, res) => {
+  res.send("snipes");
+});
+app.get("/adidas", (req, res) => {
+  res.send("adidas");
+});
+app.get("/seeds", async (req, res) => {
+  try {
+    let sneaker = await database.sneakerSeeders();
+    let brand = await database.brandSeeders();
+    res.json(sneaker);
+    res.json(brand);
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
+  }
+});
+app.get("/show", async (req, res) => {
+  try {
+    const result = await pg.select("*").from("sneakers");
+    res.json(result);
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
+  }
+});
+
 
 async function configureBrowser(url) {
   try {
