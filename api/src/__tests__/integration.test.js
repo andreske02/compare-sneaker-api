@@ -50,7 +50,7 @@ describe('All tests for brands', ()=>{
             console.log("❌ ERROR: ", error);
         }
     }),
-    test('check if brand exist', async (done) =>{
+    test('check if brand exist? Then show it', async (done) =>{
         try {
             const response = await request.get(`/brand/${uuid}`)
             expect(response.status).toBe(200)
@@ -59,7 +59,7 @@ describe('All tests for brands', ()=>{
             console.log("❌ ERROR: ", error);
         }
     }),
-    test('check if brand don\'t exist ', async (done) =>{
+    test('check if brand don\'t exist', async (done) =>{
         try {
             const response = await request.get(`/brand/6fed38e0-4d1d-11eb-9764-7b26be27a53F`)
             expect(response.status).toBe(500)
