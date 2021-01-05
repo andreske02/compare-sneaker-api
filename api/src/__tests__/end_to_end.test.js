@@ -7,16 +7,18 @@
 //  ##   ##  ##     ##  ####    ##   ##  #####  ####                                                                                                                                                                                                                                                               
 //                                                                                                                                                                                                                                                                                                                   
 //===================================================================================================================================================================================================================================================================================================================
+const supertest = require('supertest')
+const app = require('../server.js')
+const request = supertest(app)
+
 describe('POST /test endpoint', ()=>{
     test('check if response is 404', async (done) =>{
         try {
             const response = await request.post('/')
-            expect(response.status).toBe(404,done())
-        } catch (error) {
-            if (error) {
-                console.log(error);
-            }
+            expect(response.status).toBe(404)
             done()
+        } catch (error) {
+                console.log(error);
         }
     })
 })
