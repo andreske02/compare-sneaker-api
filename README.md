@@ -16,25 +16,52 @@ Use the package manager [yarn](https://yarnpkg.com/) to install all the requirem
     - [Express](https://www.npmjs.com/package/express)
     - [Cron](https://www.npmjs.com/package/cron)
     - [Cheerio](https://www.npmjs.com/package/cheerio)
+    - [supertest](https://www.npmjs.com/package/supertest)
+    - [request](https://www.npmjs.com/package/request)
+    - [body-parser](https://www.npmjs.com/package/body-parser)
 -   Testing
     - [Jest](https://www.npmjs.com/package/jest)
 
+## Install packages
+Open terminal on api and run
 ```bash
-npm i puppeteer
-npm i express
-npm i cron
-npm i cheerio
-npm i body-parser
-npm i request
-npm i supertest
+npm install
 ```
-
-## Usage
-Open terminal on 
+## Build containers
+Open terminal on root of the document
+```bash
+docker compose up
+```
+## Open api
+Open terminal on api and run
 ```bash
 npm start
-
 ```
+## Test api
+Open terminal on api and run
+```bash
+npm test 
+```
+
+## GET Endpoints
+http://localhost:3000/seeds to run the seeders <br>
+http://localhost:3000/show to show all the sneakers <br>
+http://localhost:3000/torfs to start scraping torfs website. <br>
+http://localhost:3000/brand/:brandname to show the brand by name<br>
+http://localhost:3000/brandbyid/:uuid to show the brand by uuid<br>
+http://localhost:3000/sneakers/:brand/:sort*?/ to show the sneaker by brand and sort it by name <br>
+
+
+
+
+## POST Endpoints
+http://localhost:3000/brand to create a brand. <br>
+
+## PUT Endpoints
+http://localhost:3000/updatebrand to update a brand. <br>
+
+## DELETE Endpoints
+http://localhost:3000/brand/:uuid to delete a brand. <br>
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

@@ -40,7 +40,7 @@ app.use(
     extended: true,
   })
 );
-const hosturl = "http://localhost:3001";
+const hosturl = "http://localhost:3000";
 
 /*--------- SHOW ALL RECORDS --------*/
 app.get("/", (req, res) => {
@@ -267,7 +267,7 @@ app.post("/brand", async (req, res) => {
   }
 });
 // Show brand by uuid
-app.get("/brand/:uuid", async (req, res) => {
+app.get("/brandbyid/:uuid", async (req, res) => {
   try {
     const brand = await database.getBrandById(req.params.uuid);
     if(brand.length < 1){
