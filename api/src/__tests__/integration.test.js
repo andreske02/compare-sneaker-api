@@ -52,7 +52,7 @@ describe('All tests for brands', ()=>{
     }),
     test('check if brand exist? Then show it', async (done) =>{
         try {
-            const response = await request.get(`/brand/${uuid}`)
+            const response = await request.get(`/brandbyid/${uuid}`)
             expect(response.status).toBe(200)
             done()
         } catch (error) {
