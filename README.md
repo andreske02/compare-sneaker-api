@@ -10,7 +10,7 @@ A sneaker API to get the best prices, services from a sneaker webshop.
 
 You can use this api to compare sneaker prices on different webshops.
 
-Use the package manager [yarn](https://yarnpkg.com/) to install all the requirements.
+Use the package manager [npm](https://www.npmjs.com/) to install all the requirements.
 -   Packages
     - [Puppeteer](https://www.npmjs.com/package/puppeteer)
     - [Express](https://www.npmjs.com/package/express)
