@@ -14,8 +14,8 @@ const request = supertest(app)
 describe('POST /test endpoint', ()=>{
     test('check if response is 404', async (done) =>{
         try {
-            const response = await request.post('/')
-            expect(response.status).toBe(404)
+            const response = await request.get('/')
+            expect(response.status).toBe(200)
             done()
         } catch (error) {
                 console.log(error);

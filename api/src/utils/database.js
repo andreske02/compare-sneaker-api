@@ -3,9 +3,9 @@ const pg = require("knex")({
   client: "pg",
   version: "9.6",
   searchPath: ["knex", "public"],
-  connection: process.env.PG_CONNECTION_STRING
-    ? process.env.PG_CONNECTION_STRING
-    : "postgres://example:example@localhost:5432/sneakerdb",
+  connection: process.env.PG_CONNECTION_STRING ?
+    process.env.PG_CONNECTION_STRING :
+    "postgres://example:example@localhost:5432/sneakerdb",
 });
 
 const database = {
@@ -59,6 +59,7 @@ const database = {
           .then(async () => {
             console.log("🎉", "created sneakers table");
             database.sneakerSeeders();
+            // process.exit();
           });
       }
     });
@@ -73,8 +74,7 @@ const database = {
       product_sale_price: "€ 89,00",
       product_sale: true,
       product_description: "Nike Air Force 1 '07",
-      product_image:
-        "https://www.snipes.be/dw/image/v2/BDCB_PRD/on/demandware.static/-/Sites-snse-master-eu/default/dwd508e7bc/1761737_P.jpg?sw=300&sh=300&sm=fit&sfrm=png",
+      product_image: "https://www.snipes.be/dw/image/v2/BDCB_PRD/on/demandware.static/-/Sites-snse-master-eu/default/dwd508e7bc/1761737_P.jpg?sw=300&sh=300&sm=fit&sfrm=png",
       product_available: JSON.stringify([
         "36.5",
         "37.5",
@@ -84,8 +84,7 @@ const database = {
         "41.5",
       ]),
       product_colors: JSON.stringify(["White", "Black", "Red"]),
-      product_url:
-        "https://www.snipes.be/nl/p/nike-air_force_1_shadow-white%2Fwhite%2Fwhite-00013801761737.html",
+      product_url: "https://www.snipes.be/nl/p/nike-air_force_1_shadow-white%2Fwhite%2Fwhite-00013801761737.html",
       product_shipping_info: "8.7",
       brand_uuid: "6fed38e0-4d1d-11eb-9764-7b26be27a53d",
     };
@@ -101,21 +100,25 @@ const database = {
       });
   },
   brandSeeders: async () => {
-    const brandArrayObj = [
-      {
+    const brandArrayObj = [{
         uuid: Helpers.generateUUID(),
         brand_name: "snipes",
         brand_reviews: "8.7",
-        brand_logo:
-          "https://www.snipes.nl/on/demandware.static/Sites-snse-NL-BE-Site/-/default/dwcc537b29/images/snipes_logo.svg",
+        brand_logo: "https://www.snipes.nl/on/demandware.static/Sites-snse-NL-BE-Site/-/default/dwcc537b29/images/snipes_logo.svg",
         brand_url: "https://www.snipes.com/",
+      },
+      {
+        uuid: Helpers.generateUUID(),
+        brand_name: "sneakerdistrict",
+        brand_reviews: "8.7",
+        brand_logo: "https://www.sneakerdistrict.fr/assets/img/sneaker-district-weblogo@2x.png",
+        brand_url: "https://www.sneakerdistrict.nl/",
       },
       {
         uuid: "6fed38e0-4d1d-11eb-9764-7b26be27a53d",
         brand_name: "torfs",
         brand_reviews: "8.7",
-        brand_logo:
-          "https://www.torfs.be/on/demandware.static/Sites-Torfs-Webshop-BE-Site/-/default/dw1f8272ff/images/logo_standard.svg",
+        brand_logo: "https://www.torfs.be/on/demandware.static/Sites-Torfs-Webshop-BE-Site/-/default/dw1f8272ff/images/logo_standard.svg",
         brand_url: "https://www.torfs.be/",
       },
     ];
@@ -136,14 +139,17 @@ const database = {
   // Brand
   getBrandByName: async (brandName) => {
     let brand = await pg
-      .select(["uuid"])
       .from("brands")
-      .where({ brand_name: brandName });
+      .where({
+        brand_name: brandName
+      });
     return brand;
   },
   getBrandById: async (brandId) => {
     try {
-      const brand = await pg.select().from("brands").where({ uuid: brandId });
+      const brand = await pg.select().from("brands").where({
+        uuid: brandId
+      });
       return brand;
     } catch (error) {
       console.log("❌ ERROR: ", error.message);
@@ -151,7 +157,9 @@ const database = {
   },
   deleteBrandById: async (brandId) => {
     try {
-      const brand = await pg.table("brands").where({ uuid: brandId }).del();
+      const brand = await pg.table("brands").where({
+        uuid: brandId
+      }).del();
       return brand;
     } catch (error) {
       console.log("❌ ERROR: ", error.message);
@@ -161,7 +169,9 @@ const database = {
     try {
       const brand = await pg
         .table("brands")
-        .where({ uuid: brandObj.uuid })
+        .where({
+          uuid: brandObj.uuid
+        })
         .update(brandObj);
       return brand;
     } catch (error) {
@@ -205,7 +215,9 @@ const database = {
         ])
         .from("brands")
         .rightJoin("sneakers", "sneakers.brand_uuid", "brands.uuid")
-        .where({ brand_name: brandName.toLocaleLowerCase() })
+        .where({
+          brand_name: brandName.toLocaleLowerCase()
+        })
         .orderBy("product_name", `${sort}`);
       return sneakers;
     } catch (error) {
