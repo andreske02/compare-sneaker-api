@@ -4,8 +4,7 @@ const pg = require("knex")({
   version: "9.6",
   searchPath: ["knex", "public"],
   connection: process.env.PG_CONNECTION_STRING ?
-    process.env.PG_CONNECTION_STRING :
-    "postgres://example:example@localhost:5432/sneakerdb",
+    process.env.PG_CONNECTION_STRING : "postgres://example:example@localhost:5432/sneakerdb",
 });
 
 const database = {
@@ -64,6 +63,7 @@ const database = {
       }
     });
   },
+
   /*--------- SEEDERS --------*/
   sneakerSeeders: async () => {
     const sneakerObj = {
@@ -155,6 +155,22 @@ const database = {
       console.log("❌ ERROR: ", error.message);
     }
   },
+  addBrand: async (brandObj) => {
+    let checkBrandObj = Helpers.checkBrandObj(brandObj)
+    if (!checkBrandObj) {
+      return false
+    }
+    const brand = await pg
+      .table("brands")
+      .insert(brandObj)
+      .then(function () {
+        return true;
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error);
+      });
+    return true;
+  },
   deleteBrandById: async (brandId) => {
     try {
       const brand = await pg.table("brands").where({
@@ -193,6 +209,23 @@ const database = {
       .catch((error) => {
         console.log("❌ ERROR: ", error.message);
       });
+  },
+  addSneaker: async (sneakerObj) => {
+    let checkSneakerObj = Helpers.checkSneakerObj(sneakerObj)
+    if (!checkSneakerObj) {
+      return false
+    }
+
+    const sneakers = await pg
+      .table("sneakers")
+      .insert(sneakerObj)
+      .then(function () {
+        return true;
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error);
+      });
+    return true;
   },
   getSneakersByBrand: async (brandName, sort) => {
     try {
