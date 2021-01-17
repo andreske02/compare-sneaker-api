@@ -55,11 +55,20 @@ app.use(
 );
 const hosturl = "http://localhost:3001";
 
+
 //-------- SHOW ALL RECORDS --------//
+/**
+    * @param none
+    * @returns html page
+*/
 app.get("/", (req, res) => {
   res.status(200).sendFile(htmlFile);
 });
 //-------- TORFS ENDPOINTS --------//
+/**
+    * @param none
+    * @returns array of sneakers objects
+*/
 /*======= Torfs start scraping =======*/
 app.get("/torfs", async (req, res) => {
   try {
@@ -74,6 +83,10 @@ app.get("/torfs", async (req, res) => {
   }
 });
 /*======= Torfs start scraping second pages =======*/
+/**
+    * @param none
+    * @returns array of sneakers objects
+*/
 app.post("/torfs", async (req, res) => {
   try {
     console.log(`Torfs page ${req.body.counter}`);
@@ -90,6 +103,10 @@ app.post("/torfs", async (req, res) => {
 
 //-------- BRANDS ENDPOINTS --------//
 // Create brand
+/**
+    * @param none
+    * @returns array of brand objects
+*/
 app.post("/brand", async (req, res) => {
   try {
     const brand = await database.addBrand(req.body).then((value) => {
@@ -108,6 +125,10 @@ app.post("/brand", async (req, res) => {
   }
 });
 // Show brand by uuid
+/**
+    * @param uuid
+    * @returns brand object
+*/
 app.get("/brandbyid/:uuid", async (req, res) => {
   try {
     let checkBrandUuid = Helpers.checkIfUuid(req.params.uuid);
@@ -127,6 +148,10 @@ app.get("/brandbyid/:uuid", async (req, res) => {
   }
 });
 // Show brand by name
+/**
+    * @param brandname
+    * @returns brand object
+*/
 app.get("/brand/:brandname", async (req, res) => {
   try {
     const brand = await database.getBrandByName(req.params.brandname);
@@ -142,6 +167,10 @@ app.get("/brand/:brandname", async (req, res) => {
   }
 });
 // Update brand by uuid
+/**
+    * @param none
+    * @returns status 204 + message
+*/
 app.put("/updatebrand", async (req, res) => {
   try {
     const brand = await database.updateBrandById(req.body).then((value) => {
@@ -162,6 +191,10 @@ app.put("/updatebrand", async (req, res) => {
   }
 });
 // Delete brand by uuid
+/**
+    * @param uuid
+    * @returns status 204 + message
+*/
 app.delete("/brand/:uuid", async (req, res) => {
   try {
     const brand = await database.deleteBrandById(req.params.uuid).then((value) => {
@@ -183,6 +216,10 @@ app.delete("/brand/:uuid", async (req, res) => {
 
 //-------- SNEAKERS ENDPOINTS --------//
 // Create sneaker
+/**
+    * @param none
+    * @returns status 201 + message
+*/
 app.post("/sneaker", async (req, res) => {
   try {
     const brand = await database.addSneaker(req.body).then((value) => {
@@ -200,6 +237,11 @@ app.post("/sneaker", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+/**
+    * @param brand & sort
+    * @returns sneakers object
+*/
 app.get("/sneakers/:brand/:sort*?/", async (req, res) => {
   try {
     let sorting = 'asc';
@@ -221,6 +263,10 @@ app.get("/sneakers/:brand/:sort*?/", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+/**
+    * @param uuid
+    * @returns status 204 + message
+*/
 app.delete("/sneaker/:uuid", async (req, res) => {
   try {
     const sneakers = await database.deleteSneaker(req.params.uuid).then((value)=>{
@@ -239,7 +285,12 @@ app.delete("/sneaker/:uuid", async (req, res) => {
   }
 });
 
+
 //-------- OTHER ENDPOINTS --------//
+/**
+    * @param none
+    * @returns seeds
+*/
 app.get("/seeds", async (req, res) => {
   try {
     let sneaker = await database.sneakerSeeders();
@@ -250,6 +301,10 @@ app.get("/seeds", async (req, res) => {
     console.log("❌ ERROR: ", error.message);
   }
 });
+/**
+    * @param none
+    * @returns objects of sneakers
+*/
 app.get("/show", async (req, res) => {
   try {
     const result = await pg.select("*").from("sneakers");
