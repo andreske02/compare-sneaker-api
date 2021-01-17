@@ -8,6 +8,12 @@
     "testmore": "jest --watchAll --verbose --detectOpenHandles ",
     "test": "jest"
   },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/src/__tests__/integration/",
+      "/node_modules/"
+    ]
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

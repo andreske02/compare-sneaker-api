@@ -4,8 +4,7 @@ const pg = require("knex")({
   version: "9.6",
   searchPath: ["knex", "public"],
   connection: process.env.PG_CONNECTION_STRING ?
-    process.env.PG_CONNECTION_STRING :
-    "postgres://example:example@localhost:5432/sneakerdb",
+    process.env.PG_CONNECTION_STRING : "postgres://example:example@localhost:5432/sneakerdb",
 });
 
 const database = {
@@ -64,6 +63,7 @@ const database = {
       }
     });
   },
+
   /*--------- SEEDERS --------*/
   sneakerSeeders: async () => {
     const sneakerObj = {
@@ -193,6 +193,32 @@ const database = {
       .catch((error) => {
         console.log("❌ ERROR: ", error.message);
       });
+  },
+  addSneaker: async (sneakerObj) => {
+    let checkUuid = Helpers.checkIfUuid(sneakerObj.uuid);
+    let checkProductBrand = Helpers.checkIfString(sneakerObj.product_brand);
+    let checkProductName = Helpers.checkIfString(sneakerObj.product_name);
+    let checkProductPrice = Helpers.checkIfPriceHasEuro(sneakerObj.product_price);
+    let checkProductSalePrice = Helpers.checkIfPriceHasEuro(sneakerObj.product_sale_price);
+    let checkProductSale = Helpers.checkIfBoolean(sneakerObj.product_sale);
+    let checkProductImage = Helpers.checkIfUrlImage(sneakerObj.product_image);
+    let checkProductUrl = Helpers.checkIfUrl(sneakerObj.product_url);
+    let checkProductAvailable= Helpers.checkIfArray(sneakerObj.product_available);
+    let checkProductColors= Helpers.checkIfArray(sneakerObj.product_colors);
+    let checkBrandUuid= Helpers.checkIfUuid(sneakerObj.brand_uuid);
+    if(!checkUuid || !checkProductBrand || !checkProductName || !checkProductPrice||!checkProductSalePrice || !checkProductUrl || !checkProductSale || !checkProductImage || !checkProductAvailable|| !checkProductColors|| !checkBrandUuid){
+      return false;
+    }
+    const sneakers = await pg
+      .table("sneakers")
+      .insert(sneakerObj)
+      .then(function () {
+        return true;
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error);
+      });
+      return true;
   },
   getSneakersByBrand: async (brandName, sort) => {
     try {
