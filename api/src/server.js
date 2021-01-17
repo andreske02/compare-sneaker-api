@@ -227,7 +227,6 @@ app.get("/sneakers/:brand/:sort*?/", async (req, res) => {
     if (sneakers.length == 0) {
       res.status(400).send("Wrong brand..");
     } else {
-      console.log("✅", `Show sneakers by ${sorting}`);
       for (const sneaker of sneakers) {
         sneaker.brand_name = sneaker.brand_name.toUpperCase();
       }
