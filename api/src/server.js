@@ -110,10 +110,11 @@ app.post("/torfs", async (req, res) => {
 app.post("/brand", async (req, res) => {
   try {
     const brand = await database.addBrand(req.body).then((value) => {
+
       if(value){
         res.status(201).send(`Succesfully created ${req.body.brand_name}`);
       }else{
-        res.status(400).send(`Error with creating a brand `);
+        res.status(400).send(`Error with creating a brand`);
       }
     }).catch((error) => {
       console.log("❌ ERROR: ", error.message);
@@ -139,8 +140,7 @@ app.get("/brandbyid/:uuid", async (req, res) => {
     if (brand.length < 1) {
       res.status(400).send(`${req.params.uuid} don't exist! `);
     } else {
-      console.log("✅", `Show brand ${brand[0].brand_name}`);
-      res.json(brand);
+      res.status(200).json(brand);
     }
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
@@ -199,7 +199,6 @@ app.delete("/brand/:uuid", async (req, res) => {
   try {
     const brand = await database.deleteBrandById(req.params.uuid).then((value) => {
       if(value){
-        console.log("✅", `Deleted brand ${req.body.brand_name}`);
         res.status(204).send(`Deleted ${req.body.brand_name}`);
       }else{
         res.status(400).send(`Wrong Uuid`);
@@ -252,7 +251,6 @@ app.get("/sneakers/:brand/:sort*?/", async (req, res) => {
     if (sneakers.length == 0) {
       res.status(400).send("Wrong brand..");
     } else {
-      console.log("✅", `Show sneakers by ${sorting}`);
       for (const sneaker of sneakers) {
         sneaker.brand_name = sneaker.brand_name.toUpperCase();
       }
