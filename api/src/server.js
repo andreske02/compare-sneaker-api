@@ -17,13 +17,6 @@ const htmlFile = path.join(__dirname + "/components/index.html");
 const database = require("./utils/database.js");
 const scraping = require("./utils/scraping.js");
 const app = express();
-const puppeteer = require("puppeteer");
-const $ = require("cheerio");
-const CronJob = require("cron").CronJob;
-const request = require("request");
-const randomUseragent = require('random-useragent');
-const puppeteerExtra = require('puppeteer-extra');
-const pluginStealth = require('puppeteer-extra-plugin-stealth');
 const pg = require("knex")({
   client: "pg",
   version: "9.6",

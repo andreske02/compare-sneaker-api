@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js ",
     "testmore": "jest --watchAll --verbose --detectOpenHandles ",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "jest": {
     "testPathIgnorePatterns": [

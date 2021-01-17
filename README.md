@@ -14,7 +14,6 @@ Use the package manager [npm](https://www.npmjs.com/) to install all the require
 -   Packages
     - [Puppeteer](https://www.npmjs.com/package/puppeteer)
     - [Express](https://www.npmjs.com/package/express)
-    - [Cron](https://www.npmjs.com/package/cron)
     - [Cheerio](https://www.npmjs.com/package/cheerio)
     - [supertest](https://www.npmjs.com/package/supertest)
     - [request](https://www.npmjs.com/package/request)
@@ -22,24 +21,19 @@ Use the package manager [npm](https://www.npmjs.com/) to install all the require
 -   Testing
     - [Jest](https://www.npmjs.com/package/jest)
 
-## Install packages
-Open terminal on api and run
-```bash
-npm install
-```
+
 ## Build containers
 Open terminal on root of the document
 ```bash
+cd api
 docker compose up
 ```
-## Open api
-Open terminal on api and run
-```bash
-npm start
-```
+open localhost:3000
+
 ## Test api
 Open terminal on api and run
 ```bash
+cd api
 npm test 
 ```
 
@@ -52,8 +46,6 @@ http://localhost:3000/brandbyid/:uuid to show the brand by uuid<br>
 http://localhost:3000/sneakers/:brand/:sort*?/ to show the sneaker by brand and sort it by name <br>
 
 
-
-
 ## POST Endpoints
 http://localhost:3000/brand to create a brand. <br>
 
@@ -64,10 +56,12 @@ http://localhost:3000/updatebrand to update a brand. <br>
 http://localhost:3000/brand/:uuid to delete a brand. <br>
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.<br>
+contributing.md <br>
 Please make sure to update tests as appropriate.
 
 ## License
 [MIT](/LICENSE)
 
+## Authors
+This project was created by Andres Vergauwen, student Multimedia and Creative Technologies.

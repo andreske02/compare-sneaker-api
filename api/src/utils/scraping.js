@@ -1,6 +1,5 @@
 const puppeteer = require("puppeteer");
 const $ = require("cheerio");
-const CronJob = require("cron").CronJob;
 const request = require("request");
 const randomUseragent = require('random-useragent');
 const puppeteerExtra = require('puppeteer-extra');
