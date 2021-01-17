@@ -138,20 +138,21 @@ const database = {
   /*--------- CRUD  --------*/
   // Brand
   addBrand: async (brandObj) => {
+    let result;
     let checkBrandObj = Helpers.checkBrandObj(brandObj)
     if (!checkBrandObj) {
-      return false
+      return false;
     }
     const brand = await pg
       .table("brands")
       .insert(brandObj)
       .then(function () {
-        return true;
+        result = true;
       })
       .catch((error) => {
-        console.log("❌ ERROR: ", error);
+        result = false;
       });
-    return true;
+    return result;
   },
   getBrandByName: async (brandName) => {
     let brand = await pg

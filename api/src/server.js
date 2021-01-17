@@ -55,11 +55,21 @@ app.use(
 );
 const hosturl = "http://localhost:3001";
 
+
+
 //-------- SHOW ALL RECORDS --------//
+/**
+    * @param none
+    * @returns html page
+*/
 app.get("/", (req, res) => {
   res.status(200).sendFile(htmlFile);
 });
 //-------- TORFS ENDPOINTS --------//
+/**
+    * @param none
+    * @returns array of sneakers objects
+*/
 /*======= Torfs start scraping =======*/
 app.get("/torfs", async (req, res) => {
   try {
@@ -74,6 +84,10 @@ app.get("/torfs", async (req, res) => {
   }
 });
 /*======= Torfs start scraping second pages =======*/
+/**
+    * @param none
+    * @returns array of sneakers objects
+*/
 app.post("/torfs", async (req, res) => {
   try {
     console.log(`Torfs page ${req.body.counter}`);
@@ -90,13 +104,18 @@ app.post("/torfs", async (req, res) => {
 
 //-------- BRANDS ENDPOINTS --------//
 // Create brand
+/**
+    * @param none
+    * @returns array of objects
+*/
 app.post("/brand", async (req, res) => {
   try {
     const brand = await database.addBrand(req.body).then((value) => {
+
       if(value){
         res.status(201).send(`Succesfully created ${req.body.brand_name}`);
       }else{
-        res.status(400).send(`Error with creating a brand `);
+        res.status(400).send(`Error with creating a brand`);
       }
     }).catch((error) => {
       console.log("❌ ERROR: ", error.message);
@@ -118,8 +137,7 @@ app.get("/brandbyid/:uuid", async (req, res) => {
     if (brand.length < 1) {
       res.status(400).send(`${req.params.uuid} don't exist! `);
     } else {
-      console.log("✅", `Show brand ${brand[0].brand_name}`);
-      res.json(brand);
+      res.status(200).json(brand);
     }
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
@@ -166,7 +184,6 @@ app.delete("/brand/:uuid", async (req, res) => {
   try {
     const brand = await database.deleteBrandById(req.params.uuid).then((value) => {
       if(value){
-        console.log("✅", `Deleted brand ${req.body.brand_name}`);
         res.status(204).send(`Deleted ${req.body.brand_name}`);
       }else{
         res.status(400).send(`Wrong Uuid`);
