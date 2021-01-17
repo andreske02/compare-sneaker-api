@@ -85,7 +85,30 @@ describe('All tests for brands', ()=>{
         } catch (error) {
             console.log("❌ ERROR: ", error);
         }
-    })
+    }),
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    test('test add brand', async (done) => {
+        try {
+          brandObj.uuid =  Helpers.generateUUID();
+            const response = await  Database.addBrand(brandObj);
+            expect(response).toBe(true)
+            done()
+        } catch (error) {
+            console.log("❌ ERROR: ", error);
+        }
+      })
 }) 
 
 

@@ -155,6 +155,22 @@ const database = {
       console.log("❌ ERROR: ", error.message);
     }
   },
+  addBrand: async (brandObj) => {
+    let checkBrandObj = Helpers.checkBrandObj(brandObj)
+    if (!checkBrandObj) {
+      return false
+    }
+    const brand = await pg
+      .table("brands")
+      .insert(brandObj)
+      .then(function () {
+        return true;
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error);
+      });
+    return true;
+  },
   deleteBrandById: async (brandId) => {
     try {
       const brand = await pg.table("brands").where({
@@ -195,20 +211,11 @@ const database = {
       });
   },
   addSneaker: async (sneakerObj) => {
-    let checkUuid = Helpers.checkIfUuid(sneakerObj.uuid);
-    let checkProductBrand = Helpers.checkIfString(sneakerObj.product_brand);
-    let checkProductName = Helpers.checkIfString(sneakerObj.product_name);
-    let checkProductPrice = Helpers.checkIfPriceHasEuro(sneakerObj.product_price);
-    let checkProductSalePrice = Helpers.checkIfPriceHasEuro(sneakerObj.product_sale_price);
-    let checkProductSale = Helpers.checkIfBoolean(sneakerObj.product_sale);
-    let checkProductImage = Helpers.checkIfUrlImage(sneakerObj.product_image);
-    let checkProductUrl = Helpers.checkIfUrl(sneakerObj.product_url);
-    let checkProductAvailable= Helpers.checkIfArray(sneakerObj.product_available);
-    let checkProductColors= Helpers.checkIfArray(sneakerObj.product_colors);
-    let checkBrandUuid= Helpers.checkIfUuid(sneakerObj.brand_uuid);
-    if(!checkUuid || !checkProductBrand || !checkProductName || !checkProductPrice||!checkProductSalePrice || !checkProductUrl || !checkProductSale || !checkProductImage || !checkProductAvailable|| !checkProductColors|| !checkBrandUuid){
-      return false;
+    let checkSneakerObj = Helpers.checkSneakerObj(sneakerObj)
+    if (!checkSneakerObj) {
+      return false
     }
+
     const sneakers = await pg
       .table("sneakers")
       .insert(sneakerObj)
@@ -218,7 +225,7 @@ const database = {
       .catch((error) => {
         console.log("❌ ERROR: ", error);
       });
-      return true;
+    return true;
   },
   getSneakersByBrand: async (brandName, sort) => {
     try {
