@@ -58,7 +58,7 @@ const database = {
           .then(async () => {
             console.log("🎉", "created sneakers table");
             database.sneakerSeeders();
-            // process.exit();
+            process.exit();
           });
       }
     });
