@@ -29,7 +29,7 @@ const brandObj = {
   brand_logo: "https://mosaic02.ztat.net/nvg/z-header-fragment/zalando-logo/logo_default.svg",
   brand_url: "https://www.zalando.be/",
 };
-describe('check if BRAND object is correct', () => {
+describe('Check if BRAND object is correct', () => {
     test('check if brand_uuid is a uuid', async (done) => {
         try {
           const response = await Helpers.checkIfUuid(brandObj.uuid);
@@ -67,7 +67,7 @@ describe('check if BRAND object is correct', () => {
         }
       })
   }),
-  describe('check if SNEAKER object is correct', () => {
+  describe('Check if SNEAKER object is correct', () => {
     test('check if product_brand is a string', async (done) => {
         try {
           const response = await Helpers.checkIfString(sneakerObj.product_brand);

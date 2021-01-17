@@ -92,29 +92,31 @@ app.post("/torfs", async (req, res) => {
 // Create brand
 app.post("/brand", async (req, res) => {
   try {
-    const brand = await pg
-      .table("brands")
-      .insert(req.body)
-      .then(function () {
-        console.log("✅", "Created new brand");
+    const brand = await database.addBrand(req.body).then((value) => {
+      if(value){
         res.status(201).send(`Succesfully created ${req.body.brand_name}`);
-      })
-      .catch((error) => {
-        console.log("❌ ERROR: ", error.message);
-        res.status(500).send(error.message);
-      });
+      }else{
+        res.status(400).send(`Error with creating a brand `);
+      }
+    }).catch((error) => {
+      console.log("❌ ERROR: ", error.message);
+      res.status(500).send(error.message);
+    });
   } catch (error) {
-    console.log("❌ ERROR: ", error.message);
-    res.status(500).send(error.message);
+    console.log("❌ ERROR: ", error);
+    res.status(500).send(error);
   }
 });
 // Show brand by uuid
 app.get("/brandbyid/:uuid", async (req, res) => {
   try {
+    let checkBrandUuid = Helpers.checkIfUuid(req.params.uuid);
+    if(!checkBrandUuid){
+      res.status(400).send(`${req.params.uuid} wrong type of uuid`);
+    } 
     const brand = await database.getBrandById(req.params.uuid);
     if (brand.length < 1) {
-      console.log("❌ ERROR: ", `${req.params.uuid} don't exist! `);
-      res.status(500).send(`${req.params.uuid} don't exist! `);
+      res.status(400).send(`${req.params.uuid} don't exist! `);
     } else {
       console.log("✅", `Show brand ${brand[0].brand_name}`);
       res.json(brand);
@@ -129,11 +131,10 @@ app.get("/brand/:brandname", async (req, res) => {
   try {
     const brand = await database.getBrandByName(req.params.brandname);
     if (brand.length < 1) {
-      console.log("❌ ERROR: ", `${req.params.uuid} don't exist! `);
-      res.status(500).send(`${req.params.uuid} don't exist! `);
+      res.status(400).send(`${req.params.brandname} don't exist! `);
     } else {
-      console.log("✅", `Show brand ${data[0].brand_name}`);
-      res.json(data);
+      console.log("✅", `Show brand ${brand[0].brand_name}`);
+      res.json(brand);
     }
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
@@ -143,10 +144,18 @@ app.get("/brand/:brandname", async (req, res) => {
 // Update brand by uuid
 app.put("/updatebrand", async (req, res) => {
   try {
-    console.log(req.body);
-    const brand = await database.updateBrandById(req.body);
-    console.log("✅", `Update brand ${req.body.brand_name}`);
-    res.status(410).send(`Update brand ${req.body.brand_name}`);
+    const brand = await database.updateBrandById(req.body).then((value) => {
+      if(value){
+        console.log("✅", `Update brand ${req.body.brand_name}`);
+        res.status(204).send(`Update brand ${req.body.brand_name}`);
+      }else{
+        res.status(400).send(`Error with updating ${req.body.brand_name} brand `);
+      }
+    }).catch((error) => {
+      console.log("❌ ERROR: ", error.message);
+      res.status(500).send(error.message);
+    });
+
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
     res.status(500).send(error.message);
@@ -155,9 +164,17 @@ app.put("/updatebrand", async (req, res) => {
 // Delete brand by uuid
 app.delete("/brand/:uuid", async (req, res) => {
   try {
-    const brand = await database.deleteBrandById(req.params.uuid);
-    console.log("✅", "Deleted brand");
-    res.status(410).send(`Deleted ${req.body.brand_name}`);
+    const brand = await database.deleteBrandById(req.params.uuid).then((value) => {
+      if(value){
+        console.log("✅", `Deleted brand ${req.body.brand_name}`);
+        res.status(204).send(`Deleted ${req.body.brand_name}`);
+      }else{
+        res.status(400).send(`Wrong Uuid`);
+      }
+    }).catch((error) => {
+      console.log("❌ ERROR: ", error.message);
+      res.status(500).send(error.message);
+    });
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
     res.status(500).send(error.message);
@@ -165,6 +182,24 @@ app.delete("/brand/:uuid", async (req, res) => {
 });
 
 //-------- SNEAKERS ENDPOINTS --------//
+// Create sneaker
+app.post("/sneaker", async (req, res) => {
+  try {
+    const brand = await database.addSneaker(req.body).then((value) => {
+      if(value){
+        res.status(201).send(`Succesfully created ${req.body.product_name}`);
+      }else{
+        res.status(400).send(`Error with creating a brand `);
+      }
+    }).catch((error) => {
+      console.log("❌ ERROR: ", error.message);
+      res.status(500).send(error.message);
+    });
+  } catch (error) {
+    console.log("❌ ERROR: ", error);
+    res.status(500).send(error);
+  }
+});
 app.get("/sneakers/:brand/:sort*?/", async (req, res) => {
   try {
     let sorting = 'asc';
@@ -173,16 +208,31 @@ app.get("/sneakers/:brand/:sort*?/", async (req, res) => {
     }
     const sneakers = await database.getSneakersByBrand(req.params.brand, sorting);
     if (sneakers.length == 0) {
-      console.log("No content");
-      // No content
-      res.status(204).send();
+      res.status(400).send("Wrong brand..");
     } else {
       console.log("✅", `Show sneakers by ${sorting}`);
       for (const sneaker of sneakers) {
         sneaker.brand_name = sneaker.brand_name.toUpperCase();
       }
-      res.json(sneakers);
+      res.status(200).json(sneakers);
     }
+  } catch (error) {
+    console.log("❌ ERROR: ", error.message);
+    res.status(500).send(error.message);
+  }
+});
+app.delete("/sneaker/:uuid", async (req, res) => {
+  try {
+    const sneakers = await database.deleteSneaker(req.params.uuid).then((value)=>{
+      if(value){
+        res.status(204).json("✅", `Deleted brand with uuid ${req.params.uuid}`);
+      }else{
+        res.status(400).send(`Error with deleting a sneaker ➡ wrong uuid`);
+      }
+    }).catch((error) => {
+      console.log("❌ ERROR: ", error.message);
+      res.status(500).send(error.message);
+    });
   } catch (error) {
     console.log("❌ ERROR: ", error.message);
     res.status(500).send(error.message);

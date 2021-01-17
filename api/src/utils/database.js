@@ -137,24 +137,6 @@ const database = {
 
   /*--------- CRUD  --------*/
   // Brand
-  getBrandByName: async (brandName) => {
-    let brand = await pg
-      .from("brands")
-      .where({
-        brand_name: brandName
-      });
-    return brand;
-  },
-  getBrandById: async (brandId) => {
-    try {
-      const brand = await pg.select().from("brands").where({
-        uuid: brandId
-      });
-      return brand;
-    } catch (error) {
-      console.log("❌ ERROR: ", error.message);
-    }
-  },
   addBrand: async (brandObj) => {
     let checkBrandObj = Helpers.checkBrandObj(brandObj)
     if (!checkBrandObj) {
@@ -171,29 +153,56 @@ const database = {
       });
     return true;
   },
-  deleteBrandById: async (brandId) => {
+  getBrandByName: async (brandName) => {
+    let brand = await pg
+      .from("brands")
+      .where({
+        brand_name: brandName
+      });
+    return brand;
+  },
+  getBrandById: async (brandId) => {
     try {
-      const brand = await pg.table("brands").where({
+      const brand = await pg.select().from("brands").where({
         uuid: brandId
-      }).del();
+      });
       return brand;
     } catch (error) {
-      console.log("❌ ERROR: ", error.message);
+      console.log("❌ ERROR: ", error);
     }
   },
   updateBrandById: async (brandObj) => {
     try {
+      let checkBrandObj = Helpers.checkBrandObj(brandObj)
+      if (!checkBrandObj) {
+        return false
+      }
       const brand = await pg
         .table("brands")
         .where({
           uuid: brandObj.uuid
         })
         .update(brandObj);
-      return brand;
+      return true;
     } catch (error) {
       console.log("❌ ERROR: ", error.message);
     }
   },
+  deleteBrandById: async (brandId) => {
+    try {
+      let checkBrandUuid = Helpers.checkIfUuid(brandId)
+      if (!checkBrandUuid) {
+        return false
+      }
+      const brand = await pg.table("brands").where({
+        uuid: brandId
+      }).del();
+      return true;
+    } catch (error) {
+      console.log("❌ ERROR: ", error.message);
+    }
+  },
+ 
   // Sneakers
   addSneakers: async (sneakersArray) => {
     const sneakers = await pg
@@ -256,6 +265,25 @@ const database = {
     } catch (error) {
       console.log("❌ ERROR: ", error.message);
     }
+  },
+  deleteSneaker: async (sneakerUuid) => {
+    let checkSneakerUuid = Helpers.checkIfUuid(sneakerUuid)
+    if (!checkSneakerUuid) {
+      return false
+    }
+    const sneakers = await pg
+      .table("sneakers")
+      .where({
+        uuid: sneakerUuid
+      })
+      .del()
+      .then(async function () {
+        console.log("✅", "Sneaker has been deleted");
+        return true;
+      })
+      .catch((error) => {
+        console.log("❌ ERROR: ", error.message);
+      });
   },
   deleteSneakers: async () => {
     const sneakers = await pg
